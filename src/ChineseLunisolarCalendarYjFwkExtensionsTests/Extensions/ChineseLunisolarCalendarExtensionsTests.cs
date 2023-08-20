@@ -1,10 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ChineseLunisolarCalendarYjFwkExtensions.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Globalization;
 using YiJingFramework.PrimitiveTypes;
 
@@ -36,6 +30,25 @@ public class ChineseLunisolarCalendarExtensionsTests
     }
     #endregion
 
+    #region 更好的月份信息
+    [TestMethod()]
+    public void GetMonthWithLeapTest()
+    {
+        var calendar = new ChineseLunisolarCalendar();
+
+        var dateTime = new DateTime(2023, 8, 16, 12, 41, 23);
+        Assert.AreEqual(8, calendar.GetMonth(dateTime));
+        var (month, leap) = calendar.GetMonthWithLeap(dateTime);
+        Assert.AreEqual(7, month);
+        Assert.AreEqual(false, leap);
+
+        dateTime = new DateTime(2023, 4, 19, 12, 41, 23);
+        (month, leap) = calendar.GetMonthWithLeap(dateTime);
+        Assert.AreEqual(2, month);
+        Assert.AreEqual(true, leap);
+    }
+    #endregion
+
     #region 年月日的中文表示
     [TestMethod()]
     public void GetYearGanzhiInChineseTest()
@@ -55,9 +68,8 @@ public class ChineseLunisolarCalendarExtensionsTests
 
         var year = calendar.GetYearInChinese(dateTime);
         Assert.AreEqual("二〇二三", year);
-
-        var year2 = calendar.GetYearInChinese(dateTime, zero: '零');
-        Assert.AreEqual("二零二三", year2);
+        year = calendar.GetYearInChinese(dateTime, zero: '零');
+        Assert.AreEqual("二零二三", year);
     }
 
     [TestMethod()]
@@ -65,17 +77,31 @@ public class ChineseLunisolarCalendarExtensionsTests
     {
         var calendar = new ChineseLunisolarCalendar();
 
-        var dateTime1 = new DateTime(2023, 8, 16, 12, 41, 23);
-        var month1 = calendar.GetMonthInChinese(dateTime1);
-        Assert.AreEqual("七", month1);
+        var dateTime = new DateTime(2023, 8, 16, 12, 41, 23);
+        var month = calendar.GetMonthInChinese(dateTime);
+        Assert.AreEqual("七", month);
 
-        var dateTime2 = new DateTime(2023, 4, 19, 12, 41, 23);
-        var month2 = calendar.GetMonthInChinese(dateTime2);
-        Assert.AreEqual("闰二", month2);
+        dateTime = new DateTime(2023, 4, 19, 12, 41, 23);
+        month = calendar.GetMonthInChinese(dateTime);
+        Assert.AreEqual("闰二", month);
 
-        var dateTime3 = new DateTime(2023, 2, 17, 12, 41, 23);
-        var month3 = calendar.GetMonthInChinese(dateTime3);
-        Assert.AreEqual("正", month3);
+        dateTime = new DateTime(2023, 2, 17, 12, 41, 23);
+        month = calendar.GetMonthInChinese(dateTime);
+        Assert.AreEqual("正", month);
+        month = calendar.GetMonthInChinese(dateTime, useZhengFor1: false);
+        Assert.AreEqual("一", month);
+
+        dateTime = new DateTime(2023, 12, 15, 12, 41, 23);
+        month = calendar.GetMonthInChinese(dateTime);
+        Assert.AreEqual("十一", month);
+        month = calendar.GetMonthInChinese(dateTime, useDongFor11: true);
+        Assert.AreEqual("冬", month);
+
+        dateTime = new DateTime(2024, 1, 17, 12, 41, 23);
+        month = calendar.GetMonthInChinese(dateTime);
+        Assert.AreEqual("十二", month);
+        month = calendar.GetMonthInChinese(dateTime, useLaFor12: true);
+        Assert.AreEqual("腊", month);
     }
 
     [TestMethod()]
@@ -84,11 +110,10 @@ public class ChineseLunisolarCalendarExtensionsTests
         var calendar = new ChineseLunisolarCalendar();
         var dateTime = new DateTime(2023, 8, 15, 12, 41, 23);
 
-        var day1 = calendar.GetDayInChinese(dateTime);
-        Assert.AreEqual("廿九", day1);
-
-        var day2 = calendar.GetDayInChinese(dateTime, useNianFor20s: false);
-        Assert.AreEqual("二十九", day2);
+        var day = calendar.GetDayInChinese(dateTime);
+        Assert.AreEqual("廿九", day);
+        day = calendar.GetDayInChinese(dateTime, useNianFor20s: false);
+        Assert.AreEqual("二十九", day);
     }
     #endregion
 }

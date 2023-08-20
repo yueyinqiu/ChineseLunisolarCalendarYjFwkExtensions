@@ -1,14 +1,12 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Globalization;
-using System.Text;
 using YiJingFramework.PrimitiveTypes;
 
 namespace ChineseLunisolarCalendarYjFwkExtensions.Extensions;
 
 public static class ChineseLunisolarCalendarExtensions
 {
-    public static (Tiangan, Dizhi) GetYearGanzhi(
+    public static (Tiangan tiangan, Dizhi dizhi) GetYearGanzhi(
         this ChineseLunisolarCalendar calendar, DateTime dateTime)
     {
         var year = calendar.GetSexagenaryYear(dateTime);
@@ -25,6 +23,17 @@ public static class ChineseLunisolarCalendarExtensions
             hour++;
         var result = hour / 2;
         return new(result + 1);
+    }
+
+    public static (int month, bool isLeapMonth) GetMonthWithLeap(
+        this ChineseLunisolarCalendar calendar, DateTime dateTime)
+    {
+        var month = calendar.GetMonth(dateTime);
+        var leapMonth = calendar.GetLeapMonth(calendar.GetYear(dateTime));
+        if (month < leapMonth)
+            return (month, false);
+        else
+            return (month - 1, month == leapMonth);
     }
 
     public static string GetYearGanzhiInChinese(
@@ -86,30 +95,15 @@ public static class ChineseLunisolarCalendarExtensions
     }
 
     public static string GetMonthInChinese(
-        this ChineseLunisolarCalendar calendar, DateTime dateTime)
+        this ChineseLunisolarCalendar calendar, DateTime dateTime,
+        bool useZhengFor1 = true,
+        bool useDongFor11 = false,
+        bool useLaFor12 = false)
     {
-        var month = calendar.GetMonth(dateTime);
-
-        string leap;
-        var leapMonth = calendar.GetLeapMonth(calendar.GetYear(dateTime));
-        if (month == leapMonth)
+        var (month, isLeapMonth) = calendar.GetMonthWithLeap(dateTime);
+        var result = month switch
         {
-            leap = "闰";
-            month--;
-        }
-        else if (month > leapMonth)
-        {
-            leap = "";
-            month--;
-        }
-        else
-        {
-            leap = "";
-        }
-
-        var number = month switch
-        {
-            1 => "正",
+            1 => useZhengFor1 ? "正" : "一",
             2 => "二",
             3 => "三",
             4 => "四",
@@ -119,12 +113,11 @@ public static class ChineseLunisolarCalendarExtensions
             8 => "八",
             9 => "九",
             10 => "十",
-            11 => "十一",
-            12 => "十二",
+            11 => useDongFor11 ? "冬" : "十一",
+            12 => useLaFor12 ? "腊" : "十二",
             _ => throw PackageTooOldException()
         };
-
-        return $"{leap}{number}";
+        return isLeapMonth ? $"闰{result}" : result;
     }
 
     public static string GetDayInChinese(
