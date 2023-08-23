@@ -85,6 +85,10 @@ public class ChineseLunisolarCalendarExtensionsTests
         month = calendar.GetMonthInChinese(dateTime);
         Assert.AreEqual("闰二", month);
 
+        dateTime = new DateTime(2022, 8, 5, 12, 41, 23);
+        month = calendar.GetMonthInChinese(dateTime);
+        Assert.AreEqual("七", month);
+
         dateTime = new DateTime(2023, 2, 17, 12, 41, 23);
         month = calendar.GetMonthInChinese(dateTime);
         Assert.AreEqual("正", month);

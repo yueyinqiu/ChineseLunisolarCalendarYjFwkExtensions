@@ -30,7 +30,7 @@ public static class ChineseLunisolarCalendarExtensions
     {
         var month = calendar.GetMonth(dateTime);
         var leapMonth = calendar.GetLeapMonth(calendar.GetYear(dateTime));
-        if (month < leapMonth)
+        if (leapMonth is 0 || month < leapMonth)
             return (month, false);
         else
             return (month - 1, month == leapMonth);
