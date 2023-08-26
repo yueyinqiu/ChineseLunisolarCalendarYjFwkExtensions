@@ -1,3 +1,9 @@
+# 此项目将不再更新！ No More Updates Or Bugfix! 
+
+此项目本身只是作为过渡期的临时包存在，现在 YiJingFramework 已经发布了新的包 [YiJingFramework.Nongli](https://github.com/YiJingFramework/Nongli/wiki) 以进行农历支持，不需要再继续使用此项目了。
+
+# =================
+
 # ChineseLunisolarCalendarYjFwkExtensions
 
 ChineseLunisolarCalendarYjFwkExtensions 为 `System.Globalization.ChineseLunisolarCalendar` 提供了一些扩展方法。这里暂时拿测试项目的代码作为示例：
